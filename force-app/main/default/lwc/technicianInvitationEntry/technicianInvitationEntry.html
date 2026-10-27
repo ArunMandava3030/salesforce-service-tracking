@@ -1,0 +1,19 @@
+<template>
+    <section class="slds-p-around_medium" aria-label="Share invited phone GPS">
+        <h2 class="slds-text-heading_medium">Share your phone location</h2>
+        <p class="slds-m-vertical_small">Open the complete invitation link sent by the person coordinating your visit,
+            or paste it below. You can share GPS without a Salesforce login.</p>
+        <lightning-input type="password" label="Invitation link or invitation code" value={invitationValue}
+            onchange={handleInvitationChange} autocomplete="off"></lightning-input>
+        <template lwc:if={invitationUrl}>
+            <a class="slds-button slds-button_brand slds-m-top_medium" href={invitationUrl}
+                target="_top" referrerpolicy="no-referrer">Open GPS sharing page</a>
+        </template>
+        <template lwc:if={invalidInvitation}>
+            <p class="slds-text-color_error slds-m-top_small" role="alert">Paste the complete invitation link or invitation code.
+                A tracking session ID alone cannot connect a guest phone.</p>
+        </template>
+        <p class="slds-m-top_medium">On the sharing page, tap Start sharing and allow location access.
+            Keep that page open while sharing. You can stop at any time.</p>
+    </section>
+</template>

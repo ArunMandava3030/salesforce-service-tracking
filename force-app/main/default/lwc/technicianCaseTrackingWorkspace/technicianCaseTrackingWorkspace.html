@@ -1,0 +1,108 @@
+<template>
+    <section class="workspace" aria-label="Case technician tracking">
+        <template lwc:if={showSearch}>
+            <header>
+                <p class="eyebrow">Case workspace</p>
+                <h2>Find the Case for this visit</h2>
+                <p class="help">Open a Case to see its tracking sessions or start a new visit.</p>
+            </header>
+            <form class="search-form" onsubmit={handleSearch}>
+                <lightning-input class="search-input" type="search" label="Find a Case" placeholder="Case number or subject"
+                    value={searchTerm} onchange={handleSearchChange} maxlength="80"
+                    field-level-help="Enter at least two characters from the Case number or subject."></lightning-input>
+                <lightning-button type="submit" label="Search Cases" variant="brand" disabled={searchDisabled}></lightning-button>
+            </form>
+            <template lwc:if={searchLoading}><p class="help" role="status">Searching Cases…</p></template>
+            <template lwc:if={searchError}><p class="error" role="alert">{searchError}</p></template>
+            <template lwc:if={showNoResults}><p class="help" role="status">No matching Cases are available to you. Try another Case number or subject.</p></template>
+            <template lwc:if={hasSearchResults}>
+                <ul class="case-results" aria-label="Matching Cases">
+                    <template for:each={searchResults} for:item="result">
+                        <li key={result.caseId}>
+                            <button type="button" class="case-result" data-case-id={result.caseId} onclick={handleSelectCase}>
+                                <strong>{result.label}</strong><span>{result.subject}</span>
+                            </button>
+                        </li>
+                    </template>
+                </ul>
+            </template>
+        </template>
+
+        <template lwc:if={caseLoading}><p class="help" role="status">Opening the Case…</p></template>
+        <template lwc:if={caseError}>
+            <p class="error" role="alert">{caseError}</p>
+            <div class="actions">
+                <lightning-button label="Retry Case" onclick={handleRetryCase} disabled={caseLoading}></lightning-button>
+                <template lwc:if={canChangeCase}><lightning-button label="Choose another Case" onclick={handleChangeCase}></lightning-button></template>
+            </div>
+        </template>
+
+        <template lwc:if={hasCase}>
+            <header class="case-heading">
+                <div><p class="eyebrow">Case workspace</p><h2>{caseHeading}</h2><p class="subject">{caseSubject}</p></div>
+                <template lwc:if={canChangeCase}>
+                    <lightning-button label="Change Case" onclick={handleChangeCase} disabled={mutationBusy}></lightning-button>
+                </template>
+            </header>
+            <template lwc:if={notice}><p class="notice" role="status">{notice}</p></template>
+            <template lwc:if={mutationError}><p class="error" role="alert">{mutationError}</p></template>
+            <template lwc:if={mutationBusy}><p class="help" role="status">Updating the Case tracking session…</p></template>
+
+            <template lwc:if={viewingSession}>
+                <div class="session-navigation">
+                    <lightning-button label="Back to session history" icon-name="utility:back" onclick={handleBackToHistory}></lightning-button>
+                    <span class="session-name">{selectedSessionName}</span>
+                    <p class="help">Returning to history or changing Cases keeps phone sharing active.</p>
+                </div>
+                <template for:each={sessionViews} for:item="view">
+                    <c-technician-live-tracking key={view.key} tracking-session-id={view.sessionId} case-id={view.caseId}
+                        public-publisher-page-url={publicPublisherPageUrl} public-customer-page-url={publicCustomerPageUrl}
+                        onsessionended={handleSessionEnded}></c-technician-live-tracking>
+                </template>
+            </template>
+            <template lwc:else>
+                <div class="actions">
+                    <lightning-button label="Create tracking session" variant="brand" onclick={handleCreateSession} disabled={actionsDisabled}></lightning-button>
+                    <lightning-button label="Refresh session history" icon-name="utility:refresh" onclick={handleRefreshHistory} disabled={historyLoading}></lightning-button>
+                </div>
+                <details class="link-existing">
+                    <summary>Link an existing session</summary>
+                    <p class="help">Link a session you own that is not already attached to a Case. Its phone can keep sharing.</p>
+                    <div class="search-form">
+                        <lightning-input class="search-input" type="text" label="Existing tracking session ID" value={existingSessionId}
+                            onchange={handleExistingSessionChange} maxlength="18" disabled={mutationBusy}
+                            field-level-help="Paste the 15- or 18-character Salesforce ID of your unlinked tracking session."></lightning-input>
+                        <lightning-button label="Link existing session" onclick={handleLinkSession} disabled={linkDisabled}></lightning-button>
+                    </div>
+                </details>
+                <h3>Session history</h3>
+                <p class="help">Sessions created for this Case, newest first. This history lists visits; it does not store a GPS journey.</p>
+                <template lwc:if={historyLoading}><p class="help" role="status">Loading session history…</p></template>
+                <template lwc:if={historyError}><p class="error" role="alert">{historyError}</p></template>
+                <template lwc:if={showEmptyHistory}><p class="empty">This Case has no tracking sessions yet.</p></template>
+                <template lwc:if={hasSessions}>
+                    <div class="history-scroll">
+                        <table class="history-table">
+                            <caption class="slds-assistive-text">Tracking sessions for the selected Case</caption>
+                            <thead><tr><th scope="col">Session</th><th scope="col">Status</th><th scope="col">Created</th>
+                                <th scope="col">Ended</th><th scope="col">Expires</th><th scope="col">Session owner</th><th scope="col">Open</th></tr></thead>
+                            <tbody>
+                                <template for:each={historyRows} for:item="row">
+                                    <tr key={row.sessionId}>
+                                        <th scope="row">{row.sessionName}<span class="access-label">{row.accessLabel}</span></th>
+                                        <td><span class={row.statusClass}>{row.statusLabel}</span></td>
+                                        <td>{row.createdLabel}</td><td>{row.endedLabel}</td><td>{row.expiresLabel}</td><td>{row.ownerName}</td>
+                                        <td><lightning-button label={row.openLabel} data-session-id={row.sessionId} onclick={handleOpenSession}></lightning-button></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </template>
+                <template lwc:if={hasMoreSessions}>
+                    <div class="actions"><lightning-button label="Load older sessions" onclick={handleLoadMore} disabled={historyLoading}></lightning-button></div>
+                </template>
+            </template>
+        </template>
+    </section>
+</template>

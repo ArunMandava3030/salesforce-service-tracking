@@ -1,0 +1,40 @@
+<apex:page showHeader="false" sidebar="false" standardStylesheets="false"
+    applyHtmlTag="false" applyBodyTag="false" docType="html-5.0" cache="false">
+    <html lang="en">
+        <head>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>Technician live location</title>
+            <style>
+                html, body { margin: 0; height: 100%; font-family: Arial, sans-serif; background: #f4f7fa; color: #17324d; }
+                .tracking-map { height: 100%; min-height: 340px; display: flex; flex-direction: column; }
+                .map-canvas { flex: 1 1 auto; min-height: 260px; width: 100%; }
+                .map-footer { flex: 0 0 auto; padding: 10px 14px; background: #ffffff; border-top: 1px solid #dce4ec; font-size: 12px; line-height: 1.5; }
+                .map-legend { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 4px; }
+                .legend-dot { display: inline-block; width: 10px; height: 10px; margin-right: 5px; border-radius: 50%; }
+                .customer-dot { background: #18794e; }
+                .technician-dot { background: #0b63ce; }
+                .route-line { display: inline-block; width: 18px; height: 4px; margin-right: 5px; vertical-align: middle; background: #6941c6; }
+                .map-status { margin: 0; color: #475c70; overflow-wrap: anywhere; }
+                .map-status[data-error="true"] { color: #a21d24; }
+            </style>
+            <apex:includeScript value="{!URLFOR($Resource.TechnicianRouteService)}" />
+            <apex:includeScript value="{!URLFOR($Resource.TechnicianLiveMapScript)}" />
+        </head>
+        <body>
+            <main class="tracking-map">
+                <div class="map-canvas" data-role="live-map" aria-label="Customer and technician locations"></div>
+                <footer class="map-footer">
+                    <div class="map-legend">
+                        <span><span class="legend-dot customer-dot"></span>Customer</span>
+                        <span><span class="legend-dot technician-dot"></span>Technician phone GPS</span>
+                        <span><span class="route-line"></span>Driving route</span>
+                    </div>
+                    <p class="map-status" data-role="live-map-status" role="status" aria-live="polite">
+                        Waiting to connect to the tracking page…
+                    </p>
+                </footer>
+            </main>
+        </body>
+    </html>
+</apex:page>

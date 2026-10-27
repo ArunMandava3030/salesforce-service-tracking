@@ -1,0 +1,187 @@
+<template>
+    <section class="live-tracking" aria-label="Live technician tracking">
+        <div class="intro">
+            <div>
+                <p class="eyebrow">Phone to laptop tracking</p>
+                <h2>Follow your technician's GPS</h2>
+                <p class="help">Customer location: {customerLabel}.</p>
+            </div>
+            <span class="live-badge">Real device location</span>
+        </div>
+
+        <div class="actions">
+            <template lwc:if={showCreateSession}>
+            <lightning-button label="Create tracking session" variant="brand"
+                onclick={handleCreateSession} disabled={createDisabled}></lightning-button>
+            </template>
+            <template lwc:if={canManageSession}>
+            <lightning-button label="End session" onclick={handleEndSession}
+                disabled={stopDisabled}></lightning-button>
+            </template>
+        </div>
+        <template lwc:if={busy}>
+            <p class="help" role="status">Updating the tracking session...</p>
+        </template>
+        <template lwc:if={sessionError}>
+            <p class="error" role="alert">{sessionError}</p>
+            <template lwc:if={isCaseContext}>
+                <lightning-button label="Retry session" onclick={handleRetrySession} disabled={busy}></lightning-button>
+            </template>
+        </template>
+
+        <template lwc:if={hasSession}>
+            <template lwc:if={isReadOnly}>
+                <p class="help" role="status">You are viewing this Case's session. The session creator manages sharing links and ends the session.</p>
+            </template>
+            <template lwc:if={canManageSession}>
+            <div class="phone-link invitation">
+                <h3>Invite someone to share GPS</h3>
+                <p class="help">Send an invitation to another org user or a guest. The recipient opens it on their phone,
+                    taps Start sharing, and allows location access. You watch their position here.</p>
+                <div class="actions">
+                    <lightning-button label={invitationButtonLabel} variant="brand"
+                        onclick={handleCreateInvitation} disabled={invitationDisabled}></lightning-button>
+                    <lightning-button label="Revoke invitation" onclick={handleRevokeInvitation}
+                        disabled={revokeInvitationDisabled}></lightning-button>
+                </div>
+                <p class="help">{invitationStatus}</p>
+                <template lwc:if={hasInvitationUrl}>
+                    <lightning-input type="url" label="Invitation link to send to the phone"
+                        value={invitationUrl} read-only></lightning-input>
+                    <lightning-button label="Copy invitation link" onclick={handleCopyInvitation}></lightning-button>
+                </template>
+                <template lwc:if={invitationError}>
+                    <p class="error" role="alert">{invitationError}</p>
+                </template>
+                <template lwc:if={invitationNotice}>
+                    <p class="help" role="status">{invitationNotice}</p>
+                </template>
+                <p class="help">Use one phone per session. Share the full invitation only with that person.
+                    Invitations expire with the session; End session stops all sharing.
+                    If you refresh this page, create a replacement link to send another invitation.</p>
+            </div>
+            <details class="self-tracking">
+                <summary>Use my own Salesforce login on the phone</summary>
+            <div class="phone-link">
+                <lightning-input type="url" label="Open this link in your phone browser"
+                    value={publisherUrl} read-only></lightning-input>
+                <lightning-button label="Copy phone link" onclick={handleCopyLink}></lightning-button>
+                <lightning-input type="text" label="Tracking session code"
+                    value={sessionId} read-only></lightning-input>
+                <lightning-button label="Copy tracking code" onclick={handleCopySessionCode}></lightning-button>
+                <p class="help">If your phone says the tracking session is missing, paste the phone link or this code
+                    into the phone page and tap Connect session.</p>
+                <p class="help">
+                    Sign in on the phone with the same Salesforce account, tap Start sharing, and allow location access.
+                    Keep the phone page open and the screen awake. Each session lasts up to two hours.
+                </p>
+            </div>
+            </details>
+            <div class="phone-link customer-link">
+                <h3>Customer tracking link</h3>
+                <p class="help">The customer can watch the technician and driving ETA without signing in.
+                    This private link allows viewing only. Send it to the intended customer.</p>
+                <div class="actions">
+                    <lightning-button label={customerButtonLabel} variant="brand" onclick={handleCreateCustomerLink} disabled={invitationDisabled}></lightning-button>
+                    <lightning-button label="Revoke customer link" onclick={handleRevokeCustomerLink} disabled={revokeCustomerDisabled}></lightning-button>
+                </div>
+                <template lwc:if={hasCustomerUrl}>
+                    <lightning-input type="url" label="Private link for the customer" value={customerUrl} read-only></lightning-input>
+                    <lightning-button label="Copy customer link" onclick={handleCopyCustomerLink}></lightning-button>
+                </template>
+                <template lwc:if={customerError}><p class="error" role="alert">{customerError}</p></template>
+                <template lwc:if={customerNotice}><p class="help" role="status">{customerNotice}</p></template>
+            </div>
+            </template>
+            <template lwc:if={notice}>
+                <p class="help" role="status">{notice}</p>
+            </template>
+
+            <dl class="metrics">
+                <div><dt>Tracking status</dt><dd role="status">{statusLabel}</dd></div>
+                <div><dt>Driving ETA to customer</dt><dd>{etaLabel}</dd></div>
+                <div><dt>Reported GPS accuracy</dt><dd>{accuracyLabel}</dd></div>
+            </dl>
+            <div class="gps-evidence">
+                <div class="technician-heading">
+                    <span class="technician-symbol" aria-hidden="true">T</span>
+                    <h3>Technician — shared phone GPS</h3>
+                </div>
+                <p class="coordinates">{coordinatesLabel}</p>
+                <div class="details">
+                    <p><strong>Phone captured:</strong> {capturedLabel}</p>
+                    <p><strong>Saved to Salesforce:</strong> {updatedLabel}</p>
+                    <p><strong>Checked by this laptop:</strong> {lastReadLabel}</p>
+                </div>
+                <p class="map-confirmation" role="status">{mapPositionLabel}</p>
+                <template lwc:if={waitingForPhone}>
+                    <p class="help">Ask the recipient to open the latest invitation, tap Start sharing,
+                        and wait for Last saved to Salesforce to show a time.</p>
+                </template>
+            </div>
+            <template lwc:if={stale}>
+                <p class="stale" role="status">The marker shows the last known location. Check the phone's GPS, connection, and screen.</p>
+            </template>
+
+            <template lwc:if={showKeyControls}>
+            <div class="key-row">
+                <lightning-input class="key-input" type="password" label="Google Maps API key"
+                    value={apiKey} onchange={handleKeyChange} autocomplete="off" disabled={isLoading}
+                    field-level-help={mapKeyHelp}></lightning-input>
+                <lightning-button label="Load live map" variant="brand"
+                    onclick={handleLoadMap} disabled={loadDisabled}></lightning-button>
+            </div>
+            <p class="help">Load live map saves this browser-restricted key for the session, so the technician and customer maps use the same key.</p>
+            </template>
+            <template lwc:if={showViewerLoad}>
+                <div class="actions"><lightning-button label="Load live map" variant="brand" onclick={handleLoadMap} disabled={loadDisabled}></lightning-button></div>
+            </template>
+            <template lwc:if={waitingForOwnerKey}>
+                <p class="help" role="status">Waiting for the session creator to save the Maps key. This view will connect automatically.</p>
+            </template>
+            <template lwc:if={isHistorySession}>
+                <p class="help">Session history shows the last saved location and timestamps. Live sharing has ended.</p>
+            </template>
+            <template lwc:if={mapError}>
+                <p class="error" role="alert">{mapError}</p>
+            </template>
+            <div class="map-shell">
+                <template lwc:if={frameUrl}>
+                    <iframe src={frameUrl} title="Live phone GPS and fixed customer location"
+                        referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                </template>
+                <template lwc:else>
+                    <div class="placeholder">
+                        <lightning-icon icon-name="utility:location" size="large" alternative-text="Location"></lightning-icon>
+                        <p>{mapPlaceholder}</p>
+                    </div>
+                </template>
+                <template lwc:if={isLoading}>
+                    <lightning-spinner alternative-text="Loading the live map" size="medium"></lightning-spinner>
+                </template>
+            </div>
+            <div class="actions">
+                <lightning-button label="Locate technician" variant="brand" onclick={handleLocateTechnician}
+                    disabled={locateDisabled}></lightning-button>
+                <lightning-button label="Show customer and technician" onclick={handleFitMap}
+                    disabled={mapControlsDisabled}></lightning-button>
+                <lightning-input type="checkbox" label="Follow technician"
+                    checked={followTechnician} onchange={handleFollowChange}></lightning-input>
+            </div>
+            <p class="help">Green C: fixed customer. Blue T: the sharing phone's saved GPS position. Use Locate technician to zoom in.
+                The blue circle shows reported GPS accuracy. The purple route shows driving directions; ETA accounts for traffic.
+                The map checks for new phone updates every three seconds. No technician marker appears until a real GPS fix arrives.</p>
+        </template>
+        <template lwc:else>
+            <div class="empty">
+                <template lwc:if={isCaseContext}>
+                    <p>Open a session from this Case's history to see its tracking details.</p>
+                </template>
+                <template lwc:else>
+                <p>Create a session to connect a technician's phone to this map.</p>
+                <p class="help">The phone sends its location to Salesforce. This laptop reads that session's latest location.</p>
+                </template>
+            </div>
+        </template>
+    </section>
+</template>

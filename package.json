@@ -1,0 +1,13 @@
+{
+  "name": "salesforce-service-tracking",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Salesforce session tracking demonstration using LWC, Apex and Visualforce.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.8"
+  },
+  "scripts": {
+    "test": "node --test --test-isolation=none scripts/tests/*.test.mjs"
+  }
+}

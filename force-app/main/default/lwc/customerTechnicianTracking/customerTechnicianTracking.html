@@ -1,0 +1,48 @@
+<template>
+    <section class="customer-tracking" aria-label="Your technician’s arrival">
+        <header>
+            <span class="eyebrow">Your service visit</span>
+            <h1>Your technician’s arrival</h1>
+            <p>Follow your technician as they travel to you.</p>
+        </header>
+        <template lwc:if={loading}>
+            <p class="notice" role="status">Connecting to your visit…</p>
+        </template>
+        <template lwc:if={error}>
+            <p class="error" role="alert">{error}</p>
+            <lightning-button label="Retry tracking" onclick={handleRetry}></lightning-button>
+        </template>
+        <template lwc:if={hasTracking}>
+            <div class="arrival">
+                <div><span class="eyebrow">Estimated travel time</span><strong role="status">{etaLabel}</strong></div>
+                <p>{arrivalLabel}</p>
+            </div>
+            <p class="notice" role="status">{trackingLabel}</p>
+            <template lwc:if={waitingForKey}>
+                <p class="notice">The service team is preparing your map. This page will update automatically.</p>
+            </template>
+            <template lwc:if={mapError}>
+                <p class="error" role="alert">{mapError}</p>
+                <lightning-button label="Retry map" onclick={handleRetry}></lightning-button>
+            </template>
+            <div class="map-shell">
+                <template lwc:if={frameUrl}>
+                    <iframe src={frameUrl} title="Your technician’s route to you" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                </template>
+                <template lwc:else><p class="placeholder">Your live map will appear here.</p></template>
+            </div>
+            <div class="map-caption">
+                <span>Blue T: technician · Green C: your destination</span>
+                <lightning-button label="Show both locations" onclick={handleOverview} disabled={controlsDisabled}></lightning-button>
+            </div>
+            <p class="footnote">Location captured: {updatedLabel}. Driving estimates can change with traffic and GPS updates.</p>
+        </template>
+        <template lwc:else>
+            <div class="entry">
+                <lightning-input type="password" label="Private customer link or code" value={linkInput}
+                    onchange={handleInput} autocomplete="off"></lightning-input>
+                <lightning-button label="View my technician" variant="brand" onclick={handleConnect} disabled={loading}></lightning-button>
+            </div>
+        </template>
+    </section>
+</template>

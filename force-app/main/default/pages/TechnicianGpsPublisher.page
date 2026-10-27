@@ -1,0 +1,127 @@
+<apex:page controller="TechnicianLiveTrackingController"
+    showHeader="false" sidebar="false" standardStylesheets="false"
+    docType="html-5.0" applyHtmlTag="false" applyBodyTag="false" cache="false">
+    <html lang="en">
+        <head>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <meta name="referrer" content="strict-origin-when-cross-origin" />
+            <title>Share technician GPS</title>
+            <style>
+                * { box-sizing: border-box; }
+                body {
+                    margin: 0;
+                    padding: 24px 16px;
+                    color: #102b42;
+                    background: #eef4f8;
+                    font: 16px/1.5 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                }
+                main {
+                    max-width: 560px;
+                    margin: 0 auto;
+                    padding: 24px;
+                    border: 1px solid #d5e0e9;
+                    border-radius: 20px;
+                    background: #fff;
+                    box-shadow: 0 8px 32px rgba(16, 43, 66, 0.08);
+                }
+                h1 { margin: 0 0 10px; font-size: 26px; line-height: 1.2; }
+                h2 { margin: 22px 0 10px; font-size: 17px; }
+                p { margin: 0 0 16px; }
+                .eyebrow { color: #526a7f; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+                .status {
+                    margin: 20px 0;
+                    padding: 14px;
+                    border-radius: 12px;
+                    background: #eef6ff;
+                    border: 1px solid #bedcff;
+                    overflow-wrap: anywhere;
+                }
+                .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+                button {
+                    min-height: 48px;
+                    flex: 1 1 180px;
+                    padding: 12px 18px;
+                    border: 1px solid #126dc0;
+                    border-radius: 10px;
+                    color: #fff;
+                    background: #126dc0;
+                    font: inherit;
+                    font-weight: 600;
+                    cursor: pointer;
+                }
+                button.secondary { color: #8d2626; border-color: #cb7777; background: #fff; }
+                button:disabled { opacity: 0.5; cursor: default; }
+                button:focus-visible { outline: 3px solid #8abfff; outline-offset: 3px; }
+                .recovery { margin: 0 0 20px; }
+                .recovery label { display: block; font-weight: 600; }
+                .recovery input {
+                    display: block;
+                    width: 100%;
+                    margin: 8px 0 12px;
+                    padding: 12px;
+                    border: 1px solid #8b9eaf;
+                    border-radius: 8px;
+                    font: inherit;
+                }
+                dl { margin: 0; }
+                dl > div { padding: 10px 0; border-bottom: 1px solid #e9eef2; }
+                dt { color: #526a7f; font-size: 13px; }
+                dd { margin: 2px 0 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+                .note { margin: 20px 0 0; font-size: 14px; color: #526a7f; }
+                .phone-map { height: 340px; margin: 12px 0; border-radius: 12px; background: #eef4f8; }
+                .route-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+                .phone-pin { display: grid; place-items: center; width: 32px; height: 32px; border: 3px solid white; border-radius: 50%; color: white; font-weight: 700; box-shadow: 0 2px 6px #0004; }
+                .phone-pin.customer { background: #18834b; }
+                .phone-pin.technician { background: #126dc0; }
+            </style>
+        </head>
+        <body>
+            <main data-phone-publisher="true"
+                data-action-get="{!$RemoteAction.TechnicianLiveTrackingController.getPhoneSession}"
+                data-action-directions="{!$RemoteAction.TechnicianLiveTrackingController.getPhoneDirections}"
+                data-action-publish="{!$RemoteAction.TechnicianLiveTrackingController.publishLocation}"
+                data-action-stop="{!$RemoteAction.TechnicianLiveTrackingController.stopSharing}">
+                <p class="eyebrow">Technician tracking POC</p>
+                <h1>Share your phone GPS</h1>
+                <p>Your laptop map will show this phone as the technician. Location sharing begins only after you tap Start sharing.</p>
+                <div class="status" data-status="true" role="status" aria-live="polite">Checking your Salesforce tracking session...</div>
+                <form class="recovery" data-session-recovery="true" data-connect-form="true" hidden="hidden">
+                    <label for="tracking-session-input">Phone link or tracking session code</label>
+                    <input id="tracking-session-input" data-session-input="true" type="text"
+                        autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="2048"
+                        aria-describedby="tracking-session-help" />
+                    <p id="tracking-session-help">Copy the complete phone link or tracking session code shown on your laptop. Sign in here with the same Salesforce user.</p>
+                    <button type="submit" data-connect="true">Connect session</button>
+                </form>
+                <div class="actions">
+                    <button type="button" data-start="true" disabled="disabled">Start sharing</button>
+                    <button type="button" class="secondary" data-stop="true" disabled="disabled">Stop sharing</button>
+                </div>
+                <h2>Your route to the customer</h2>
+                <p class="note" data-phone-map-status="true" role="status" aria-live="polite">Connect your tracking session to prepare the customer map.</p>
+                <div class="phone-map" data-phone-map="true" aria-label="Your phone and the customer on Google Maps"></div>
+                <dl class="route-metrics">
+                    <div><dt>Estimated driving time</dt><dd data-phone-eta="true">Not available</dd></div>
+                    <div><dt>Road distance</dt><dd data-phone-route-distance="true">Not available</dd></div>
+                </dl>
+                <p class="note">Green C is the customer; blue T is this phone. The purple line follows roads. Time estimates can change with traffic and GPS accuracy.</p>
+                <h2>Current location</h2>
+                <dl>
+                    <div><dt>Connected tracking code</dt><dd data-session-code="true">Not connected</dd></div>
+                    <div><dt>Phone latitude, longitude</dt><dd data-coordinates="true">Waiting for GPS</dd></div>
+                    <div><dt>GPS accuracy</dt><dd data-accuracy="true">Waiting for GPS</dd></div>
+                    <div><dt>GPS captured at</dt><dd data-captured="true">No position yet</dd></div>
+                    <div><dt>Last saved to Salesforce</dt><dd data-sent="true">No position sent yet</dd></div>
+                    <div><dt>Customer latitude, longitude</dt><dd>37.7749, -122.4194</dd></div>
+                    <div><dt>Session expires</dt><dd data-expires="true">Checking...</dd></div>
+                </dl>
+                <p class="note">Keep this page in the foreground and your screen awake. Mobile browsers can pause GPS when the screen locks or you switch apps. GPS accuracy can vary indoors.</p>
+                <p class="note">Tap Stop sharing to end the Salesforce session. Closing this page stops sending from this phone, but the session can remain active until it expires. Sign in as the same Salesforce user as your laptop. The session owner configures Maps; you do not need to enter a key on this phone.</p>
+            </main>
+            <script src="{!URLFOR($Resource.TechnicianRouteService)}" defer="defer"></script>
+            <script src="{!URLFOR($Resource.TechnicianPhoneMapScript)}" defer="defer"></script>
+            <script src="{!URLFOR($Resource.TechnicianGpsPublisherScript)}" defer="defer"></script>
+        </body>
+    </html>
+</apex:page>

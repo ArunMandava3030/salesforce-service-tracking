@@ -1,0 +1,33 @@
+:host { display: block; }
+.workspace { padding: 1rem; color: #181818; }
+.eyebrow { margin: 0 0 0.3rem; color: #0b5cab; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+h2 { margin: 0 0 0.4rem; font-size: 1.35rem; font-weight: 700; }
+h3 { margin: 1.5rem 0 0.4rem; font-size: 1.1rem; font-weight: 700; }
+.help { margin: 0.5rem 0; color: #444; font-size: 0.85rem; line-height: 1.55; }
+.subject { margin: 0; overflow-wrap: anywhere; }
+.case-heading { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; }
+.search-form, .actions { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.75rem; margin: 1rem 0; }
+.search-input { flex: 1 1 16rem; max-width: 34rem; }
+.case-results { max-width: 46rem; margin: 1rem 0; padding: 0; list-style: none; }
+.case-results li + li { margin-top: 0.5rem; }
+.case-result { display: flex; flex-direction: column; gap: 0.35rem; width: 100%; padding: 0.85rem 1rem; border: 1px solid #c9d8e8; border-radius: 0.5rem; text-align: left; background: #f5f9fd; color: #181818; cursor: pointer; overflow-wrap: anywhere; }
+.case-result strong { color: #0b5cab; }
+.case-result:hover { background: #edf4fb; }
+.case-result:focus-visible { outline: 3px solid #80b7ed; outline-offset: 2px; }
+.link-existing { margin: 1rem 0; padding: 0.85rem 1rem; border: 1px solid #dce4ec; border-radius: 0.5rem; }
+.link-existing summary { cursor: pointer; font-weight: 600; }
+.error { margin: 0.75rem 0; padding: 0.8rem; border-radius: 0.4rem; background: #fef1ee; color: #8e030f; }
+.notice { margin: 0.75rem 0; padding: 0.8rem; border-radius: 0.4rem; background: #e9f6ee; color: #155b37; }
+.empty { margin: 1rem 0; padding: 1.5rem; border: 1px dashed #c9c9c9; border-radius: 0.5rem; text-align: center; }
+.history-scroll { overflow-x: auto; margin-top: 1rem; border: 1px solid #dce4ec; border-radius: 0.5rem; }
+.history-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
+.history-table th, .history-table td { padding: 0.85rem; border-bottom: 1px solid #e7edf3; vertical-align: top; }
+.history-table thead { background: #f3f7fb; }
+.history-table th { font-weight: 700; }
+.history-table tbody tr:last-child th, .history-table tbody tr:last-child td { border-bottom: 0; }
+.access-label { display: block; margin-top: 0.35rem; font-size: 0.75rem; font-weight: 400; color: #555; }
+.status { display: inline-block; padding: 0.2rem 0.55rem; border-radius: 1rem; background: #edf0f3; white-space: nowrap; }
+.status.active { background: #e3f5eb; color: #155b37; }
+.session-navigation { padding: 1rem 0; border-bottom: 1px solid #dce4ec; }
+.session-name { display: inline-block; margin-left: 1rem; font-weight: 700; }
+@media (max-width: 600px) { .workspace { padding: 0.75rem; } .session-name { display: block; margin: 0.75rem 0 0; } }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Customer_Token_Hash__c</fullName>
+    <caseSensitive>true</caseSensitive>
+    <description>SHA-256 digest of the active read-only customer capability. Independent of the publisher capability; raw tokens are never stored.</description>
+    <externalId>false</externalId>
+    <label>Customer Token Hash</label>
+    <length>64</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>true</unique>
+</CustomField>

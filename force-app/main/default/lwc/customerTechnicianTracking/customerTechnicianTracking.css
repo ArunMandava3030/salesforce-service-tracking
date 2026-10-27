@@ -1,0 +1,16 @@
+:host { display: block; }
+.customer-tracking { max-width: 1000px; margin: 0 auto; padding: 24px; color: #17324d; background: #fff; border-radius: 16px; }
+header h1 { margin: 6px 0 10px; font-size: 1.7rem; font-weight: 700; }
+header p, .footnote { color: #52697b; }
+.eyebrow { font-size: .75rem; letter-spacing: .07em; text-transform: uppercase; color: #52697b; }
+.arrival { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 22px; margin: 24px 0 12px; background: #edf5ff; border: 1px solid #c8e1ff; border-radius: 14px; }
+.arrival strong { display: block; font-size: 2rem; line-height: 1.3; color: #0759a5; }
+.notice, .error { padding: 12px 0; }
+.error { color: #a12c24; }
+.map-shell { position: relative; height: 470px; margin-top: 12px; overflow: hidden; border: 1px solid #d2deea; border-radius: 14px; background: #f4f7fa; }
+iframe { display: block; border: 0; width: 100%; height: 100%; }
+.placeholder { display: grid; height: 100%; place-content: center; padding: 20px; text-align: center; }
+.map-caption { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 0; }
+.footnote { font-size: .8rem; }
+.entry { display: grid; gap: 14px; max-width: 560px; margin-top: 24px; }
+@media (max-width: 550px) { .customer-tracking { padding: 16px; } .map-shell { height: 390px; } .arrival strong { font-size: 1.6rem; } }

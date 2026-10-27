@@ -1,0 +1,14 @@
+<template>
+    <lightning-card title="Technician tracking POC" icon-name="utility:location">
+        <template lwc:if={showCustomer}>
+            <c-customer-technician-tracking public-publisher-page-url={publicPublisherPageUrl}></c-customer-technician-tracking>
+        </template>
+        <template lwc:elseif={isGuestVisitor}>
+            <c-technician-invitation-entry public-publisher-page-url={publicPublisherPageUrl}></c-technician-invitation-entry>
+        </template>
+        <template lwc:else>
+            <c-technician-case-tracking-workspace record-id={recordId} object-api-name={objectApiName}
+                public-publisher-page-url={publicPublisherPageUrl} public-customer-page-url={publicCustomerPageUrl}></c-technician-case-tracking-workspace>
+        </template>
+    </lightning-card>
+</template>
