@@ -72,4 +72,6 @@ Publication checks: 223 JavaScript tests passed, with 8 optional deployed-site c
 
 <img width="1914" height="1051" alt="Screenshot 2026-10-27 171322" src="https://github.com/user-attachments/assets/a294c641-f39b-4c80-9442-5cda144883cd" />
 <img width="1919" height="1063" alt="Screenshot 2026-10-27 171346" src="https://github.com/user-attachments/assets/dfb76ef6-513f-4cbf-b516-1931c0e7b182" />
-
+<img width="1179" height="1610" alt="IMG_8865" src="https://github.com/user-attachments/assets/2ea2dd40-53d4-4024-89f4-0a0b81217c24" />
+<img width="1179" height="2184" alt="IMG_8866" src="https://github.com/user-attachments/assets/b9c81ac7-3de4-4a50-8f28-7ff31fceca57" />
+<img width="1179" height="1932" alt="IMG_8867" src="https://github.com/user-attachments/assets/4b17525c-d1ba-4e0b-ba22-d1043f1f4ac3" />
