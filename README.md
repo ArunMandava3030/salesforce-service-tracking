@@ -69,3 +69,7 @@ Complete the [site and map setup](docs/setup.md), then add **Technician Tracking
 `npm test` exercises invitation parsing, permission boundaries in browser flows, map handshakes, GPS lifecycle, routing, viewer updates, and Case workspace behavior. Opt-in deployed-site checks are skipped unless a site URL is supplied. Apex tests are included and must be run against a Salesforce org; local JavaScript tests do not compile Apex or replace a device test.
 
 Publication checks: 223 JavaScript tests passed, with 8 optional deployed-site checks skipped. A validation-only Salesforce deployment checked 49 metadata components and passed all 32 included Apex tests. No changes were retained by that validation run.
+
+<img width="1914" height="1051" alt="Screenshot 2026-10-27 171322" src="https://github.com/user-attachments/assets/a294c641-f39b-4c80-9442-5cda144883cd" />
+<img width="1919" height="1063" alt="Screenshot 2026-10-27 171346" src="https://github.com/user-attachments/assets/dfb76ef6-513f-4cbf-b516-1931c0e7b182" />
+
